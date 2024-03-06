@@ -1,3 +1,4 @@
+from src.ai import ai
 from src.game import game
 
 class Game:
@@ -9,6 +10,11 @@ class Game:
     def print_board(self):
         for row in self.board:
             print(row)
+        print("\n")
+
+    def ai_move(self):
+        best_move = ai.find_best_move(self.board, depth=7)  # Choose depth as appropriate
+        self.play(best_move)
 
     def play(self, direction):
         changed = False

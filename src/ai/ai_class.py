@@ -4,3 +4,5 @@ import ai
 class AI:
     def __init__(self, game):
         self.game = game
+    
+    
