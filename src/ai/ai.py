@@ -38,10 +38,10 @@ def evaluate(board):
     potential_merges_bonus = 0
     
     # Weights (These might need optimization)
-    w_open = 3.0
-    w_edge = 5.0
-    w_mono = -2.5
-    w_merge = 1.0
+    w_open = 12
+    w_edge = 5
+    w_mono = -3.5
+    w_merge = 4
 
     # Calculate open squares bonus
     open_squares_bonus = sum(row.count(0) for row in board) * w_open
