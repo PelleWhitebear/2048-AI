@@ -1,32 +1,37 @@
 import cma
-import numpy as np
+from src.game.game_class import Game
+from src.ai.weights import AIWeights  # Make sure this path matches your project structure
 
-# The objective function to maximize the highest tile number
-def evaluate(board, w_open, w_edge, w_mono, w_merge, w_tile_flat, w_empty):
-    # Here, you would implement your game simulation using the provided weights
-    # and return the highest tile number achieved
-    pass
-
-# The wrapper for the objective function that will be used by CMA-ES
-def objective_function(weights):
-    # Assume board is the starting state of the board for evaluation
-    board = start_game()  # This should reset/start the game and return the initial board
-
-    # Extract individual weights from the flat weight list provided by CMA-ES
-    w_open, w_edge, w_mono, w_merge, *w_tile_flat, w_empty = weights
+def evaluate(game_instance: Game, weights: AIWeights):
+    # Initialize the highest tile as the minimum possible value
+    highest_tile = 2
+    move_possible = True
     
-    # Call the evaluation function with the current set of weights
-    max_tile = evaluate(board, w_open, w_edge, w_mono, w_merge, w_tile_flat, w_empty)
+    while move_possible:
+        # Assuming game_instance.ai_move now accepts an instance of AIWeights
+        move_possible, highest_tile = game_instance.ai_move(weights)
     
-    # Since CMA-ES is a minimization algorithm, negate the max_tile to make it a minimization problem
+    return highest_tile
+
+def objective_function(weights_array):
+    # Create an AIWeights instance from the array provided by CMA-ES
+    ai_weights = AIWeights(*weights_array)
+    
+    # Initialize the game instance
+    game_instance = Game(ai=True, ai_choice=1)
+
+    # Evaluate the game performance using the provided weights
+    max_tile = evaluate(game_instance, ai_weights)
+    
+    # Negate the max_tile value to turn maximization into minimization for CMA-ES
     return -max_tile
 
-# Initialize the parameters for CMA-ES
-initial_weights = [12, 5, -3.5, 4] + [1] * 16 + [1]  # Flat list including weights for the 4x4 w_tile matrix
-sigma = 0.5  # Initial standard deviation
-options = {'maxiter': 100, 'popsize': 10}  # Adjust as necessary
+# Initial parameters for CMA-ES
+initial_weights = [1, 1, 1, 1]  # Initial values for w_open, w_edge, w_mono, and w_merge
+sigma = 0.5  # Initial standard deviation for the distribution
+options = {'maxiter': 100, 'popsize': 8}  # Adjust these options based on your needs
 
-# Set up and run the optimizer
+# Run the optimization
 es = cma.CMAEvolutionStrategy(initial_weights, sigma, options)
 while not es.stop():
     solutions = es.ask()
@@ -34,10 +39,14 @@ while not es.stop():
     es.logger.add()
     es.disp()
 
-# Retrieve the results
+# Retrieve and print the results
 result = es.result
-best_weights = result[0]  # The best solution found (i.e., weights)
-best_score = -result[1]  # The best score found (negate because we minimized the negative score)
+best_weights_array = result[0]  # Best found solution (array of weights)
+best_score = -result[1]  # Best score found; negate it to match the original maximization goal
 
+# Convert the best weights array back to an AIWeights instance for readability
+best_weights = AIWeights(*best_weights_array)
+
+print(f'Best weights: {best_weights_array}')
 print(f'Best weights: {best_weights}')
-print(f'Best score (highest tile): {best_score}')
+print(f'Best score (highest tile achieved): {best_score}')

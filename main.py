@@ -1,3 +1,4 @@
+from src.ai.weights import AIWeights
 from src.game.game_class import Game
 
 # TODO: Implement GUI
@@ -21,9 +22,11 @@ if __name__ == '__main__':
 
     move_possible = True
     max_title = 0 
+
+    weights = AIWeights(w_open=11.551709867417983, w_edge=5.170678470947694, w_mono=-2.6763103527189873, w_merge=4.500281610006598)
     while move_possible:
         if game_module.ai:
-            move_possible, max_title = game_module.ai_move()
+            move_possible, max_title = game_module.ai_move(weights)
 
         else:
             move = input("Your move (W/A/S/D): ").strip().upper()

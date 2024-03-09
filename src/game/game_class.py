@@ -1,3 +1,4 @@
+from src.ai.weights import AIWeights
 from src.ai import ai_expect as ai
 from src.ai import ai_montecarlo as MCTS
 from src.game import game
@@ -14,10 +15,10 @@ class Game:
             print(row)
         print("\n")
 
-    def ai_move(self):
+    def ai_move(self, ai_weights : AIWeights):
         best_move = None
         if self.ai_choice == 1:
-            best_move = ai.find_best_move(self.board, depth=5)
+            best_move = ai.find_best_move(self.board, depth=3, ai_weights=ai_weights)
         elif self.ai_choice == 2:
             best_move = MCTS.find_best_move(self.board, iterations=1)
 
@@ -47,10 +48,10 @@ class Game:
 
         if changed:
             game.add_tile(self.board)
-            self.print_board()
+          #  self.print_board()
             return True, getMaxValue(self.board)
         
-        self.print_board()
+       # self.print_board()
         return game.get_status(self.board), getMaxValue(self.board)
 
      

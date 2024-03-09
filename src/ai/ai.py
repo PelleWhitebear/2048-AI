@@ -1,3 +1,4 @@
+from src.ai.weights import AIWeights
 from src.game import game
 
 def minimax(board, depth, maximizing_player):
@@ -33,17 +34,17 @@ def make_move(board, move):
     elif move == "D":
         return game.move_right(board)
 
-def evaluate(board):
+def evaluate(board, ai_weights : AIWeights):
     open_squares_bonus = 0
     edge_tiles_bonus = 0
     non_monotonic_penalty = 0
     potential_merges_bonus = 0
     
     # Weights (These might need optimization)
-    w_open = 12
-    w_edge = 5
-    w_mono = -2
-    w_merge = 4
+    w_open = ai_weights.w_open
+    w_edge = ai_weights.w_edge
+    w_mono = ai_weights.w_mono
+    w_merge = ai_weights.w_merge
 
     # Calculate open squares bonus
     open_squares_bonus = sum(row.count(0) for row in board) * w_open

@@ -1,28 +1,29 @@
 from concurrent.futures import ThreadPoolExecutor
 from src.game import game
 from src.ai.ai import evaluate
+from src.ai.weights import AIWeights
 
 import random
 
-def expectimax(board, depth, maximizing_player):
+def expectimax(board, depth, maximizing_player, ai_weights : AIWeights ):
     game_status = game.get_status(board)
     #print("game status " + str(game_status))
     if depth == 0 or game_status:
-        return evaluate(board)  # This should be your evaluation function
+        return evaluate(board, ai_weights)  # This should be your evaluation function
 
     if maximizing_player:
         # Implement the Max part of the Expectimax algorithm
         max_eval = float('-inf')
         for move in ["W", "A", "S", "D"]:
             new_board, _ = make_move(board, move)  # This should simulate the move
-            eval = expectimax(new_board, depth - 1, False)
+            eval = expectimax(new_board, depth - 1, False, ai_weights)
             max_eval = max(max_eval, eval)
         return max_eval
     else:
         # Implement the Average (Expectation) part of the Expectimax algorithm
         empty_positions = get_empty_positions(board)
         if not empty_positions:
-            return evaluate_expect(board)  # Can't place a new tile, so just evaluate the board
+            return evaluate(board)  # Can't place a new tile, so just evaluate the board
         
         # Assume the probability of a '2' tile is 0.9 and a '4' tile is 0.1
         prob_2 = 0.9
@@ -32,11 +33,11 @@ def expectimax(board, depth, maximizing_player):
         for position in empty_positions:
             # Calculate the expected value for placing a '2'
             new_board = place_new_tile(board, position, 2)
-            expected_value += prob_2 * expectimax(new_board, depth - 1, True)
+            expected_value += prob_2 * expectimax(new_board, depth - 1, True, ai_weights)
             
             # Calculate the expected value for placing a '4'
             new_board = place_new_tile(board, position, 4)
-            expected_value += prob_4 * expectimax(new_board, depth - 1, True)
+            expected_value += prob_4 * expectimax(new_board, depth - 1, True, ai_weights)
             
         # Normalize the expected value by the number of possible placements
         return expected_value / (len(empty_positions) * (prob_2 + prob_4))
@@ -60,7 +61,7 @@ def make_move(board, move):
 
 # Your evaluate function remains unchanged
 
-def find_best_move(board, depth):
+def find_best_move(board, depth, ai_weights : AIWeights):
     best_score = float('-inf')
     best_move = None
 
@@ -71,7 +72,7 @@ def find_best_move(board, depth):
 
         # If the move changes the board, evaluate it using expectimax
         if changed:
-            score = expectimax(new_board, depth - 1, False)
+            score = expectimax(new_board, depth - 1, False, ai_weights)
 
             # Update the best score and move if this move is better
             if score > best_score:
