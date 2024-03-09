@@ -24,10 +24,11 @@ if __name__ == '__main__':
     max_title = 0 
 
    # weights = AIWeights(w_open=11.551709867417983, w_edge=5.170678470947694, w_mono=-2.6763103527189873, w_merge=4.500281610006598)
-    weights = AIWeights(w_open=5.336521160788287, w_edge=1.227927904779254, w_mono=-2.2908727512303084, w_merge=3.115830573443014)
+   # weights = AIWeights(w_open=5.336521160788287, w_edge=1.227927904779254, w_mono=-2.2908727512303084, w_merge=3.115830573443014)
+    weights = AIWeights(w_open=32.683694024472544, w_edge=-2.8323952817780897, w_mono=3.879831259907803, w_merge=10.671034176282877, w_empty=-22.74928242356081)
     while move_possible:
         if game_module.ai:
-            move_possible, max_title = game_module.ai_move(weights)
+            move_possible, max_title, total_sum = game_module.ai_move(weights)
 
         else:
             move = input("Your move (W/A/S/D): ").strip().upper()

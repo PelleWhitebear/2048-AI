@@ -11,14 +11,14 @@ class Game:
         #self.print_board()
 
     def print_board(self):
-        for row in self.board:
-            print(row)
-        print("\n")
+       for row in self.board:
+           print(row)
+       print("\n")
 
     def ai_move(self, ai_weights : AIWeights):
         best_move = None
         if self.ai_choice == 1:
-            best_move = ai.find_best_move(self.board, depth=5, ai_weights=ai_weights)
+            best_move = ai.find_best_move(self.board, depth=3, ai_weights=ai_weights)
         elif self.ai_choice == 2:
             best_move = MCTS.find_best_move(self.board, iterations=1)
 
@@ -27,7 +27,8 @@ class Game:
             # Handle no valid move found; could be an indication the game is over
             # For example, you can print a message, choose a random move, or end the game
            # print("No valid moves found by AI.")
-            return False, getMaxValue(self.board)
+            highest_tile, highest_sum = getMaxValue(self.board)
+            return False, highest_tile, highest_sum
 
         return self.play(best_move)
 
@@ -44,22 +45,28 @@ class Game:
             self.board, changed = game.move_right(self.board)
         else:
            # print("!!!!!!!!!!!! Invalid")
-            return False, getMaxValue(self.board)
+            highest_tile, highest_sum = getMaxValue(self.board)
+            return False, highest_tile, highest_sum
 
         if changed:
             game.add_tile(self.board)
             self.print_board()
-            return True, getMaxValue(self.board)
+            highest_tile, highest_sum = getMaxValue(self.board)
+            return True, highest_tile, highest_sum
         
         self.print_board()
-        return game.get_status(self.board), getMaxValue(self.board)
+        highest_tile, highest_sum = getMaxValue(self.board)
+
+        return game.get_status(self.board), highest_tile, highest_sum
 
      
 
-def getMaxValue(board) -> int:
+def getMaxValue(board):
     max = 0
+    sum = 0
     for i in range(4):
         for j in range(4):
             if board[i][j] > max:
                 max = board[i][j]
-    return int(max)
+            sum += board[i][j]
+    return int(max), int(sum)

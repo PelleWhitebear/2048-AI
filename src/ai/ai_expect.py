@@ -9,7 +9,7 @@ def expectimax(board, depth, maximizing_player, ai_weights : AIWeights ):
     game_status = game.get_status(board)
    # print("game status " + str(game_status))
     if depth == 0 or game_status:
-        return evaluate(board, ai_weights)  # This should be your evaluation function
+        return evaluate_expect(board, ai_weights)  # This should be your evaluation function
 
     if maximizing_player:
         # Implement the Max part of the Expectimax algorithm
@@ -23,7 +23,7 @@ def expectimax(board, depth, maximizing_player, ai_weights : AIWeights ):
         # Implement the Average (Expectation) part of the Expectimax algorithm
         empty_positions = get_empty_positions(board)
         if not empty_positions:
-            return evaluate(board, ai_weights)  # Can't place a new tile, so just evaluate the board
+            return evaluate_expect(board, ai_weights)  # Can't place a new tile, so just evaluate the board
         
         # Assume the probability of a '2' tile is 0.9 and a '4' tile is 0.1
         prob_2 = 0.9
@@ -87,18 +87,19 @@ def find_best_move(board, depth, ai_weights : AIWeights):
 
 
 
-def evaluate_expect(board):
-    w_open = 12
-    w_edge = 5
-    w_mono = -3.5
-    w_merge = 4
+def evaluate_expect(board, ai_weights : AIWeights):
+    w_open = ai_weights.w_open
+    w_edge = ai_weights.w_edge
+    w_mono = ai_weights.w_mono
+    w_merge = ai_weights.w_merge
+    w_empty = ai_weights.w_empty
+
     w_tile = [
     [1, 2, 4, 8],
     [2, 4, 8, 16],
     [4, 8, 16, 32],
     [8, 16, 32, 64]
 ]
-    w_empty = 1
 
     # Your existing evaluation components
     open_squares_bonus = sum(row.count(0) for row in board) * w_open

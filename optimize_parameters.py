@@ -6,11 +6,12 @@ from src.ai.weights import AIWeights  # Make sure this path matches your project
 def evaluate(game_instance: Game, weights: AIWeights):
     # Initialize the highest tile as the minimum possible value
     highest_tile = 2
+    highest_sum = 2
     move_possible = True
     
     while move_possible:
         # Assuming game_instance.ai_move now accepts an instance of AIWeights
-        move_possible, highest_tile = game_instance.ai_move(weights)
+        move_possible, highest_tile, highest_sum = game_instance.ai_move(weights)
     
     return highest_tile
 
@@ -28,7 +29,7 @@ def objective_function(weights_array):
     return -max_tile
 
 # Initial parameters for CMA-ES
-initial_weights = [0, 0, 0, 0]  # Initial values for w_open, w_edge, w_mono, and w_merge
+initial_weights = [0, 0, 0, 0, 0]  # Initial values for w_open, w_edge, w_mono, and w_merge
 sigma = 0.5  # Initial standard deviation for the distribution
 options = {'maxiter': 400, 'popsize': 8}  # Adjust these options based on your needs
 
