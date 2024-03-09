@@ -6,7 +6,8 @@ import random
 
 def expectimax(board, depth, maximizing_player):
     game_status = game.get_status(board)
-    if depth == 0 or not game_status:
+    #print("game status " + str(game_status))
+    if depth == 0 or game_status:
         return evaluate(board)  # This should be your evaluation function
 
     if maximizing_player:
