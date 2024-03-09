@@ -8,7 +8,7 @@ class Game:
         self.board = game.start_game()
         self.ai = ai
         self.ai_choice = ai_choice
-        self.print_board()
+        #self.print_board()
 
     def print_board(self):
         for row in self.board:
@@ -18,7 +18,7 @@ class Game:
     def ai_move(self, ai_weights : AIWeights):
         best_move = None
         if self.ai_choice == 1:
-            best_move = ai.find_best_move(self.board, depth=3, ai_weights=ai_weights)
+            best_move = ai.find_best_move(self.board, depth=4, ai_weights=ai_weights)
         elif self.ai_choice == 2:
             best_move = MCTS.find_best_move(self.board, iterations=1)
 
@@ -26,7 +26,7 @@ class Game:
         if best_move is None:
             # Handle no valid move found; could be an indication the game is over
             # For example, you can print a message, choose a random move, or end the game
-            print("No valid moves found by AI.")
+           # print("No valid moves found by AI.")
             return False, getMaxValue(self.board)
 
         return self.play(best_move)
@@ -43,7 +43,7 @@ class Game:
         elif direction.upper() == 'D':
             self.board, changed = game.move_right(self.board)
         else:
-            print("!!!!!!!!!!!! Invalid")
+           # print("!!!!!!!!!!!! Invalid")
             return False, getMaxValue(self.board)
 
         if changed:

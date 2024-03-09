@@ -7,7 +7,7 @@ import random
 
 def expectimax(board, depth, maximizing_player, ai_weights : AIWeights ):
     game_status = game.get_status(board)
-    #print("game status " + str(game_status))
+   # print("game status " + str(game_status))
     if depth == 0 or game_status:
         return evaluate(board, ai_weights)  # This should be your evaluation function
 
@@ -23,7 +23,7 @@ def expectimax(board, depth, maximizing_player, ai_weights : AIWeights ):
         # Implement the Average (Expectation) part of the Expectimax algorithm
         empty_positions = get_empty_positions(board)
         if not empty_positions:
-            return evaluate(board)  # Can't place a new tile, so just evaluate the board
+            return evaluate(board, ai_weights)  # Can't place a new tile, so just evaluate the board
         
         # Assume the probability of a '2' tile is 0.9 and a '4' tile is 0.1
         prob_2 = 0.9
@@ -80,8 +80,8 @@ def find_best_move(board, depth, ai_weights : AIWeights):
                 best_move = move
 
     # If best_move is None, it means no move improved the board, which might indicate a game over scenario
-    if best_move is None:
-        print("No valid moves available. Game may be over or in a deadlocked state.")
+    #if best_move is None:
+        #print("No valid moves available. Game may be over or in a deadlocked state.")
 
     return best_move
 

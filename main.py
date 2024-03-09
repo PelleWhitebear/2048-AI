@@ -23,7 +23,8 @@ if __name__ == '__main__':
     move_possible = True
     max_title = 0 
 
-    weights = AIWeights(w_open=11.551709867417983, w_edge=5.170678470947694, w_mono=-2.6763103527189873, w_merge=4.500281610006598)
+   # weights = AIWeights(w_open=11.551709867417983, w_edge=5.170678470947694, w_mono=-2.6763103527189873, w_merge=4.500281610006598)
+    weights = AIWeights(w_open=5.336521160788287, w_edge=1.227927904779254, w_mono=-2.2908727512303084, w_merge=3.115830573443014)
     while move_possible:
         if game_module.ai:
             move_possible, max_title = game_module.ai_move(weights)

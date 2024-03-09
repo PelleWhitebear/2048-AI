@@ -1,4 +1,5 @@
 import cma
+from tqdm import tqdm
 from src.game.game_class import Game
 from src.ai.weights import AIWeights  # Make sure this path matches your project structure
 
@@ -27,17 +28,19 @@ def objective_function(weights_array):
     return -max_tile
 
 # Initial parameters for CMA-ES
-initial_weights = [1, 1, 1, 1]  # Initial values for w_open, w_edge, w_mono, and w_merge
+initial_weights = [0, 0, 0, 0]  # Initial values for w_open, w_edge, w_mono, and w_merge
 sigma = 0.5  # Initial standard deviation for the distribution
-options = {'maxiter': 100, 'popsize': 8}  # Adjust these options based on your needs
+options = {'maxiter': 400, 'popsize': 8}  # Adjust these options based on your needs
 
-# Run the optimization
+# Run the optimization with a progress indicator
 es = cma.CMAEvolutionStrategy(initial_weights, sigma, options)
-while not es.stop():
-    solutions = es.ask()
-    es.tell(solutions, [objective_function(x) for x in solutions])
-    es.logger.add()
-    es.disp()
+max_iter = options['maxiter']  # Maximum number of iterations
+
+with tqdm(total=max_iter, desc="Optimizing", unit="iter") as pbar:
+    while not es.stop():
+        solutions = es.ask()
+        es.tell(solutions, [objective_function(x) for x in solutions])
+        pbar.update(1)  # Update the progress bar for each iteration
 
 # Retrieve and print the results
 result = es.result
@@ -47,6 +50,6 @@ best_score = -result[1]  # Best score found; negate it to match the original max
 # Convert the best weights array back to an AIWeights instance for readability
 best_weights = AIWeights(*best_weights_array)
 
-print(f'Best weights: {best_weights_array}')
-print(f'Best weights: {best_weights}')
+print(f'Best weights array: {best_weights_array}')
+print(f'Best AIWeights instance: {best_weights}')
 print(f'Best score (highest tile achieved): {best_score}')

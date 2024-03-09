@@ -1,5 +1,5 @@
 class AIWeights:
-    def __init__(self, w_open=12, w_edge=5, w_mono=-2, w_merge=4):
+    def __init__(self, w_open : float, w_edge : float, w_mono : float, w_merge : float):
         self.w_open = w_open
         self.w_edge = w_edge
         self.w_mono = w_mono
