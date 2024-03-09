@@ -48,10 +48,10 @@ class Game:
 
         if changed:
             game.add_tile(self.board)
-          #  self.print_board()
+            self.print_board()
             return True, getMaxValue(self.board)
         
-       # self.print_board()
+        self.print_board()
         return game.get_status(self.board), getMaxValue(self.board)
 
      
