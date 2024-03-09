@@ -18,7 +18,7 @@ class Game:
     def ai_move(self, ai_weights : AIWeights):
         best_move = None
         if self.ai_choice == 1:
-            best_move = ai.find_best_move(self.board, depth=4, ai_weights=ai_weights)
+            best_move = ai.find_best_move(self.board, depth=5, ai_weights=ai_weights)
         elif self.ai_choice == 2:
             best_move = MCTS.find_best_move(self.board, iterations=1)
 
