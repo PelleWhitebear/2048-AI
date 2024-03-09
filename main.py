@@ -7,8 +7,12 @@ if __name__ == '__main__':
     i = input().upper()
 
     if i == 'Y':
-        print("AI not implemented yet...")
-        game_module = Game(ai = True)
+        print("choose AI type ( 1 Expectimax /  2 Mont Carlo Tree search)")
+        X = input().upper()
+        if X != '1' and X != '2':
+            print("Invalid input")
+            exit()
+        game_module = Game(ai = True, ai_choice = int(X))
         
         
         

@@ -1,10 +1,12 @@
-from src.ai import ai
+from src.ai import ai_expect as ai
+from src.ai import ai_montecarlo as MCTS
 from src.game import game
 
 class Game:
-    def __init__(self, ai=False):
+    def __init__(self, ai=False, ai_choice : int = 1):
         self.board = game.start_game()
         self.ai = ai
+        self.ai_choice = ai_choice
         self.print_board()
 
     def print_board(self):
@@ -13,7 +15,10 @@ class Game:
         print("\n")
 
     def ai_move(self):
-        best_move = ai.find_best_move(self.board, depth=7)  # Choose depth as appropriate
+        if self.ai_choice == 1:
+            best_move = ai.find_best_move(self.board, depth=5)
+        elif self.ai_choice == 2:
+            best_move = MCTS.find_best_move(self.board, iterations=1)
         self.play(best_move)
 
     def play(self, direction):
@@ -37,8 +42,8 @@ class Game:
 
         if status == 'W':
             print("You win!")
-            self.print_board()
-            return True
+          #  self.print_board()
+          #  return True
         elif status == 'L':
             print("Game over")
             self.print_board()

@@ -20,6 +20,8 @@ def minimax(board, depth, maximizing_player):
             eval = minimax(new_board, depth - 1, True)
             min_eval = min(min_eval, eval)
         return min_eval
+    
+
 
 def make_move(board, move):
     if move == "W":

@@ -17,8 +17,8 @@ def add_tile(board):
     while board[r][c] != 0:
         r = random.randint(0, 3)
         c = random.randint(0, 3)
-
-    board[r][c] = 2 or 4
+    # 90% chance of getting a 2, 10% chance of getting a 4
+    board[r][c] = 2 if random.random() < 0.9 else 4
 
 
 def get_status(board):
