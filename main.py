@@ -19,10 +19,15 @@ if __name__ == '__main__':
     elif i == 'N':
         game_module = Game()
 
-    while True:
+    move_possible = True
+    max_title = 0 
+    while move_possible:
         if game_module.ai:
-            game_module.ai_move()
+            move_possible, max_title = game_module.ai_move()
+
         else:
             move = input("Your move (W/A/S/D): ").strip().upper()
             if game_module.play(move):
                 break
+    print("Game Over")
+    print("Total Score: ", max_title)

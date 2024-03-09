@@ -22,20 +22,26 @@ def add_tile(board):
 
 
 def get_status(board):
-    # win condition
-    for i in range(4):
-        for j in range(4):
-            if board[i][j] == 2048:
-                return 'W'
+    # Check for the win condition if needed
+    # for i in range(4):
+    #     for j in range(4):
+    #         if board[i][j] == 2048:
+    #             return 'W'
 
-    # lose condition
+    # Check for any possible moves left
     for i in range(4):
         for j in range(4):
-            if (i < 3 and board[i + 1][j] != board[i][j]) or \
-                    (j < 3 and board[i][j + 1] != board[i][j]) or \
-                    board[i][j] == 0:
-                return None
-    return 'L'
+            if board[i][j] == 0:  # Check for empty cell
+                return False
+            if i < 3 and board[i][j] == board[i + 1][j]:  # Check for vertical merge
+                return False
+            if j < 3 and board[i][j] == board[i][j + 1]:  # Check for horizontal merge
+                return False
+
+    # No moves left, game over
+    return True
+
+
 
 
 def move_up(board):

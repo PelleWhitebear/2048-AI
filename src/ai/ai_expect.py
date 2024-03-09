@@ -1,10 +1,12 @@
+from concurrent.futures import ThreadPoolExecutor
 from src.game import game
 from src.ai.ai import evaluate
 
 import random
 
 def expectimax(board, depth, maximizing_player):
-    if depth == 0 or game.get_status(board) is not None:
+    game_status = game.get_status(board)
+    if depth == 0 or not game_status:
         return evaluate(board)  # This should be your evaluation function
 
     if maximizing_player:
@@ -57,17 +59,30 @@ def make_move(board, move):
 
 # Your evaluate function remains unchanged
 
-def find_best_move(board, depth=3):
+def find_best_move(board, depth):
     best_score = float('-inf')
     best_move = None
+
+    # Iterate through each possible move
     for move in ["W", "A", "S", "D"]:
-        new_board, changed = make_move(board.copy(), move)  # Ensure board.copy() if necessary
-        if changed:  # Only consider if the move changes the board
+        # Attempt to make the move on a copy of the board
+        new_board, changed = make_move(board.copy(), move)
+
+        # If the move changes the board, evaluate it using expectimax
+        if changed:
             score = expectimax(new_board, depth - 1, False)
+
+            # Update the best score and move if this move is better
             if score > best_score:
                 best_score = score
                 best_move = move
+
+    # If best_move is None, it means no move improved the board, which might indicate a game over scenario
+    if best_move is None:
+        print("No valid moves available. Game may be over or in a deadlocked state.")
+
     return best_move
+
 
 
 def evaluate_expect(board):
@@ -75,7 +90,12 @@ def evaluate_expect(board):
     w_edge = 5
     w_mono = -3.5
     w_merge = 4
-    w_tile = 0
+    w_tile = [
+    [1, 2, 4, 8],
+    [2, 4, 8, 16],
+    [4, 8, 16, 32],
+    [8, 16, 32, 64]
+]
     w_empty = 1
 
     # Your existing evaluation components
@@ -112,4 +132,73 @@ def place_new_tile(board, position, value):
     new_board = [row[:] for row in board]  # Make a deep copy of the board
     new_board[position[0]][position[1]] = value
     return new_board
+
+def parallel_expectimax(board, depth, maximizing_player, executor):
+    if depth == 0 or game.get_status(board) is not None:
+        return evaluate_expect(board)
+
+    if maximizing_player:
+        max_eval = float('-inf')
+        futures = []
+
+        for move in ["W", "A", "S", "D"]:
+            new_board, _ = make_move(board, move)
+            future = executor.submit(expectimax, new_board, depth - 1, False)
+            futures.append(future)
+
+        for future in futures:
+            eval = future.result()
+            max_eval = max(max_eval, eval)
+
+        return max_eval
+    else:
+        empty_positions = get_empty_positions(board)
+
+        if not empty_positions:
+            return evaluate_expect(board)
+
+        prob_2 = 0.9
+        prob_4 = 0.1
+        expected_value = 0
+
+        futures = []
+
+        for position in empty_positions:
+            new_board_2 = place_new_tile(board, position, 2)
+            future_2 = executor.submit(expectimax, new_board_2, depth - 1, True)
+            futures.append((prob_2, future_2))
+
+            new_board_4 = place_new_tile(board, position, 4)
+            future_4 = executor.submit(expectimax, new_board_4, depth - 1, True)
+            futures.append((prob_4, future_4))
+
+        for prob, future in futures:
+            expected_value += prob * future.result()
+
+        return expected_value / len(empty_positions)
+
+def find_best_move_parallel(board, depth=3):
+    best_score = float('-inf')
+    best_move = None
+    executor = ThreadPoolExecutor(max_workers=4)  # Adjust the number of workers as needed
+
+    try:
+        futures = []
+
+        for move in ["W", "A", "S", "D"]:
+            new_board, changed = make_move(board.copy(), move)
+            if changed:
+                future = executor.submit(parallel_expectimax, new_board, depth - 1, False)
+                futures.append((move, future))
+
+        for move, future in futures:
+            score = future.result()
+            if score > best_score:
+                best_score = score
+                best_move = move
+
+    finally:
+        executor.shutdown()
+
+    return best_move
 

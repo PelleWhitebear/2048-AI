@@ -42,7 +42,7 @@ def evaluate(board):
     # Weights (These might need optimization)
     w_open = 12
     w_edge = 5
-    w_mono = -3.5
+    w_mono = -2
     w_merge = 4
 
     # Calculate open squares bonus
