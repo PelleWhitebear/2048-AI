@@ -1,3 +1,4 @@
+import numpy as np
 from src.ai.weights import AIWeights
 from src.game import game
 
@@ -67,13 +68,33 @@ def evaluate(board, ai_weights : AIWeights):
         for i in range(3):
             if row[i] > row[i+1] and row[i+1] != 0:
                 non_monotonic_penalty += (row[i] - row[i+1]) * w_mono
+    
     for col in zip(*board):
         for i in range(3):
             if col[i] > col[i+1] and col[i+1] != 0:
                 non_monotonic_penalty += (col[i] - col[i+1]) * w_mono
 
+    snake_score = snake_evaluation_function(board)
+
     # Combine heuristics to form a positional score
-    score = open_squares_bonus + edge_tiles_bonus + non_monotonic_penalty + potential_merges_bonus
+    score = open_squares_bonus + edge_tiles_bonus + non_monotonic_penalty + potential_merges_bonus + snake_score
+    return score
+
+def snake_evaluation_function(board):
+    # Define a weight matrix that encourages a snake-like pattern starting from the bottom-right
+    weights = np.array([
+        [3,  2,  1,  0],
+        [4,  5,  6,  7],
+        [11, 10, 9,  8],
+        [12, 13, 14, 15]
+    ])
+    
+    # Convert the board to a numpy array for easier manipulation
+    board_array = np.array(board)
+    
+    # Calculate the score by multiplying the board with the weight matrix
+    score = np.sum(board_array * weights / 2)
+    
     return score
 
 

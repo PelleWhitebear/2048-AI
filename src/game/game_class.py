@@ -4,17 +4,20 @@ from src.ai import ai_montecarlo as MCTS
 from src.game import game
 
 class Game:
-    def __init__(self, ai=False, ai_choice : int = 1, search_depth : int = 3):
+    def __init__(self, ai=False, ai_choice : int = 1, print_board_bool=True, search_depth : int = 3):
         self.board = game.start_game()
         self.ai = ai
         self.ai_choice = ai_choice
+        self.print_board_bool = print_board_bool
         self.search_depth = search_depth
+
         #self.print_board()
 
     def print_board(self):
-       for row in self.board:
-           print(row)
-       print("\n")
+       if (self.print_board_bool):
+        for row in self.board:
+            print(row)
+        print("\n")
 
     def ai_move(self, ai_weights : AIWeights):
         best_move = None
