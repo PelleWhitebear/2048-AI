@@ -4,10 +4,11 @@ from src.ai import ai_montecarlo as MCTS
 from src.game import game
 
 class Game:
-    def __init__(self, ai=False, ai_choice : int = 1):
+    def __init__(self, ai=False, ai_choice : int = 1, search_depth : int = 3):
         self.board = game.start_game()
         self.ai = ai
         self.ai_choice = ai_choice
+        self.search_depth = search_depth
         #self.print_board()
 
     def print_board(self):
@@ -18,7 +19,7 @@ class Game:
     def ai_move(self, ai_weights : AIWeights):
         best_move = None
         if self.ai_choice == 1:
-            best_move = ai.find_best_move(self.board, depth=3, ai_weights=ai_weights)
+            best_move = ai.find_best_move(self.board, depth=self.search_depth, ai_weights=ai_weights)
         elif self.ai_choice == 2:
             best_move = MCTS.find_best_move(self.board, iterations=1)
 
