@@ -1,4 +1,5 @@
 import cma
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 from src.game.game_class import Game
 from src.ai.weights import AIWeights  # Make sure this path matches your project structure
@@ -31,10 +32,10 @@ def objective_function(weights_array):
 # Initial parameters for CMA-ES
 initial_weights = [0, 0, 0, 0, 0]  # Initial values for w_open, w_edge, w_mono, and w_merge
 sigma = 0.5  # Initial standard deviation for the distribution
-options = {'maxiter': 400, 'popsize': 8}  # Adjust these options based on your needs
+options = {'maxiter': 200, 'popsize': 8}  # Adjust these options based on your needs
 
 # Run the optimization with a progress indicator
-es = cma.CMAEvolutionStrategy(initial_weights, sigma, options)
+es : cma.CMAEvolutionStrategy = cma.CMAEvolutionStrategy(initial_weights, sigma, options)
 max_iter = options['maxiter']  # Maximum number of iterations
 
 with tqdm(total=max_iter, desc="Optimizing", unit="iter") as pbar:
@@ -48,9 +49,17 @@ result = es.result
 best_weights_array = result[0]  # Best found solution (array of weights)
 best_score = -result[1]  # Best score found; negate it to match the original maximization goal
 
+
+
 # Convert the best weights array back to an AIWeights instance for readability
 best_weights = AIWeights(*best_weights_array)
 
 print(f'Best weights array: {best_weights_array}')
 print(f'Best AIWeights instance: {best_weights}')
 print(f'Best score (highest tile achieved): {best_score}')
+
+es.plot()
+
+# Save the plot as an image file
+plt.savefig('optimization_progress.png')
+plt.close()
