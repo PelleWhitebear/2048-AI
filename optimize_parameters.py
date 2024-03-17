@@ -14,14 +14,14 @@ def evaluate(game_instance: Game, weights: AIWeights):
         # Assuming game_instance.ai_move now accepts an instance of AIWeights
         move_possible, highest_tile, highest_sum = game_instance.ai_move(weights)
     
-    return highest_tile
+    return highest_sum
 
 def objective_function(weights_array):
     # Create an AIWeights instance from the array provided by CMA-ES
     ai_weights = AIWeights(*weights_array)
     
     # Initialize the game instance
-    game_instance = Game(ai=True, ai_choice=1, search_depth=3)
+    game_instance = Game(ai=True, ai_choice=1, print_board_bool=False, search_depth=2)
 
     # Evaluate the game performance using the provided weights
     max_tile = evaluate(game_instance, ai_weights)
@@ -30,9 +30,9 @@ def objective_function(weights_array):
     return -max_tile
 
 # Initial parameters for CMA-ES
-initial_weights = [0, 0, 0, 0, 0]  # Initial values for w_open, w_edge, w_mono, and w_merge
-sigma = 0.5  # Initial standard deviation for the distribution
-options = {'maxiter': 200, 'popsize': 8}  # Adjust these options based on your needs
+initial_weights = [0, 0, 0, 0, 0]  # Initial values for w_open, w_edge, w_mono, and w_merge, w_empty / snake
+sigma = 1  # Initial standard deviation for the distribution
+options = {'maxiter': 800, 'popsize': 12}  # Adjust these options based on your needs
 
 # Run the optimization with a progress indicator
 es : cma.CMAEvolutionStrategy = cma.CMAEvolutionStrategy(initial_weights, sigma, options)
