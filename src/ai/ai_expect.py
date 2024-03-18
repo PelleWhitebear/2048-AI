@@ -6,7 +6,7 @@ from src.ai.weights import AIWeights
 def expectimax(board, depth, maximizing_player, ai_weights: AIWeights, alpha=float('-inf'), beta=float('inf')):
     game_status = game.get_status(board)
     if depth == 0 or game_status:
-        return evaluate(board, ai_weights)  # Your evaluation function
+        return evaluate(board, ai_weights)  
 
     if maximizing_player:
         max_eval = float('-inf')
@@ -16,7 +16,7 @@ def expectimax(board, depth, maximizing_player, ai_weights: AIWeights, alpha=flo
             max_eval = max(max_eval, eval)
             alpha = max(alpha, eval)
             if beta <= alpha:
-                break  # Prune remaining branches
+                break  
         return max_eval
     else:
         empty_positions = get_empty_positions(board)
@@ -38,7 +38,7 @@ def expectimax(board, depth, maximizing_player, ai_weights: AIWeights, alpha=flo
 
             alpha = max(alpha, eval_2, eval_4)
             if beta <= alpha:
-                break  # Prune remaining branches
+                break  
 
         return expected_value / (len(empty_positions) * (prob_2 + prob_4))
 
@@ -74,9 +74,7 @@ def find_best_move(board, depth, ai_weights : AIWeights):
         # If the move changes the board, evaluate it using expectimax
         if changed:
             score = expectimax(new_board, depth - 1, False, ai_weights)
-            # score = expectimax_alpha_beta_multiprocess(new_board, depth - 1, False, ai_weights)
-            # score = expectimax_alpha_beta_multiprocess(new_board, depth - 1, False, ai_weights)
-            # Update the best score and move if this move is better
+           
             if score > best_score:
                 best_score = score
                 best_move = move
@@ -103,7 +101,6 @@ def evaluate_expect(board, ai_weights : AIWeights):
     [8, 16, 32, 64]
 ]
 
-    # Your existing evaluation components
     open_squares_bonus = sum(row.count(0) for row in board) * w_open
     edge_tiles_bonus = sum((board[i][j] + board[j][i]) * w_edge for i in [0, 3] for j in range(4))
     non_monotonic_penalty = sum((row[i] - row[i+1]) * w_mono for row in board for i in range(3))
@@ -133,49 +130,4 @@ def place_new_tile(board, position, value):
     new_board[position[0]][position[1]] = value
     return new_board
 
-# --------------------------------------------------------------------------------------------
 
-def evaluate_worker(board, ai_weights):
-    return evaluate_expect(board, ai_weights)
-
-def expectimax_parallel(board, depth, maximizing_player, ai_weights, alpha=float('-inf'), beta=float('inf')):
-    game_status = game.get_status(board)
-    if depth == 0 or game_status:
-        return evaluate_expect(board, ai_weights)
-
-    if maximizing_player:
-        max_eval = float('-inf')
-        for move in ["W", "A", "S", "D"]:
-            new_board, _ = make_move(board, move)
-            eval = expectimax(new_board, depth - 1, False, ai_weights, alpha, beta)
-            max_eval = max(max_eval, eval)
-            alpha = max(alpha, eval)
-            if beta <= alpha:
-                break  # Prune remaining branches
-        return max_eval
-
-    else:
-        empty_positions = get_empty_positions(board)
-        if not empty_positions:
-            return evaluate_expect(board, ai_weights)
-
-        prob_2 = 0.9
-        prob_4 = 0.1
-        expected_value = 0
-
-        with ProcessPoolExecutor() as executor:
-            futures = []
-            for position in empty_positions:
-                new_board_2 = place_new_tile(board, position, 2)
-                future_2 = executor.submit(evaluate_worker, new_board_2, ai_weights)
-                futures.append(future_2)
-
-                new_board_4 = place_new_tile(board, position, 4)
-                future_4 = executor.submit(evaluate_worker, new_board_4, ai_weights)
-                futures.append(future_4)
-
-            for future in futures:
-                eval_result = future.result()
-                expected_value += prob_2 * eval_result if future in futures[:len(futures) // 2] else prob_4 * eval_result
-
-        return expected_value / (len(empty_positions) * (prob_2 + prob_4))
