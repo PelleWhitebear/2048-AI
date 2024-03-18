@@ -1,14 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
 from src.game import game
-from src.ai.ai import evaluate
+from src.ai.evaluation_function import evaluate
 from src.ai.weights import AIWeights
-
-import random
 
 def expectimax(board, depth, maximizing_player, ai_weights: AIWeights, alpha=float('-inf'), beta=float('inf')):
     game_status = game.get_status(board)
     if depth == 0 or game_status:
-        return evaluate_expect(board, ai_weights)  # Your evaluation function
+        return evaluate(board, ai_weights)  # Your evaluation function
 
     if maximizing_player:
         max_eval = float('-inf')
@@ -23,7 +21,7 @@ def expectimax(board, depth, maximizing_player, ai_weights: AIWeights, alpha=flo
     else:
         empty_positions = get_empty_positions(board)
         if not empty_positions:
-            return evaluate_expect(board, ai_weights)
+            return evaluate(board, ai_weights)
 
         prob_2 = 0.9
         prob_4 = 0.1

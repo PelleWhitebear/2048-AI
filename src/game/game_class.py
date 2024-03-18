@@ -1,6 +1,5 @@
 from src.ai.weights import AIWeights
 from src.ai import ai_expect as ai
-from src.ai import ai_montecarlo as MCTS
 from src.game import game
 
 class Game:
