@@ -3,12 +3,11 @@ from src.ai import ai_expect as ai
 from src.game import game
 
 class Game:
-    def __init__(self, ai=False, ai_choice : int = 1, print_board_bool=True, search_depth : int = 3):
+    def __init__(self, ai=False, print_board_bool=True, ai_search_depth : int = 3):
         self.board = game.start_game()
         self.ai = ai
-        self.ai_choice = ai_choice
         self.print_board_bool = print_board_bool
-        self.search_depth = search_depth
+        self.search_depth = ai_search_depth
 
         #self.print_board()
 
@@ -20,10 +19,7 @@ class Game:
 
     def ai_move(self, ai_weights : AIWeights):
         best_move = None
-        if self.ai_choice == 1:
-            best_move = ai.find_best_move(self.board, depth=self.search_depth, ai_weights=ai_weights)
-        elif self.ai_choice == 2:
-            best_move = MCTS.find_best_move(self.board, iterations=1)
+        best_move = ai.find_best_move(self.board, depth=self.search_depth, ai_weights=ai_weights)
 
         # If best_move is None, no valid move was found
         if best_move is None:

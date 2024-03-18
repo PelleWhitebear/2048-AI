@@ -21,7 +21,7 @@ def objective_function(weights_array):
     ai_weights = AIWeights(*weights_array)
     
     # Initialize the game instance
-    game_instance = Game(ai=True, ai_choice=1, print_board_bool=False, search_depth=2)
+    game_instance = Game(ai=True, ai_choice=1, print_board_bool=False, ai_search_depth=2)
 
     # Evaluate the game performance using the provided weights
     max_tile = evaluate(game_instance, ai_weights)

@@ -43,12 +43,12 @@ def evaluate(board, ai_weights : AIWeights):
                 non_monotonic_penalty += (col[i] - col[i+1]) * w_mono
 
     if (ai_weights.SnakeMatrix):
-        matrx_score = snake_evaluation_function(board, ai_weights.w_empty)
+        matrix_score = snake_evaluation_function(board, ai_weights.w_empty)
     else:
         matrix_score = increase_towards_left_corner_matrix(board, ai_weights.w_empty)
 
     # Combine heuristics to form a positional score
-    score = open_squares_bonus + edge_tiles_bonus + non_monotonic_penalty + potential_merges_bonus + matrx_score
+    score = open_squares_bonus + edge_tiles_bonus + non_monotonic_penalty + potential_merges_bonus + matrix_score
     return score
 
 def snake_evaluation_function(board, w_snake):
